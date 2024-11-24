@@ -1,0 +1,22 @@
+{
+  "name": "tsx-example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsx watch ./src/index.tsx"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@bsv/sdk": "^1.1.32",
+    "@types/express": "^5.0.0",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.3",
+    "resolve": "^1.22.8",
+    "typescript": "^5.7.2"
+  }
+}
