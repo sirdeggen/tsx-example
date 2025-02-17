@@ -1,9 +1,13 @@
 import express, { Application, Request, Response } from 'express'
 import upload from './upload'
+import download from './download'
 import { PrivateKey } from '@bsv/sdk'
 import db from './db'
 import html from './frontend'
 import dotenv from 'dotenv'
+import callback from './callback'
+import integrity from './integrity'
+import fund from './fund'
 dotenv.config()
 
 const { FUNDING_WIF, PORT } = process.env
@@ -14,6 +18,7 @@ const app: Application = express()
 
 app.use(express.json())
 
+// frontend
 app.get('/', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'text/html')
   const remainingFundingTokens = await db.collection('funding').countDocuments({ spendTxid: null })
@@ -21,38 +26,12 @@ app.get('/', async (req: Request, res: Response) => {
   res.send(html(address, remainingFundingTokens))
 })
 
-app.get('/fund/:number', async (req: Request, res: Response) => {
-  const { number } = req.params
-  res.send({ number })
-})
-
+// functional endpoints
+app.get('/fund/:number', fund)
 app.post('/upload', upload)
-
-app.get('/download/:id', async (req: Request, res: Response) => {
-  // get the data by its txid or hash
-
-  
-  // return the file data only
-  res.send({ file: '' })
-})
-
-app.get('/integrity/:id', async (req: Request, res: Response) => {
-  // get the transaction and merkle path
-
-  // return that for validation client side.
-  res.send({beef: 'dead'})
-})
-
-app.post('/callback', async (req: Request, res: Response) => {
-  // make sure this is ARC calling us
-  if (req?.headers?.authorization !== process.env.CALLBACK_TOKEN) {
-    res.status(401).send({ error: 'Unauthorized' })
-    return
-  }
-  const { txid } = req.body
-  await db.collection('txs').updateOne({ txid }, { $addToSet: { arc: req.body, time: Date.now() } })
-  res.send({ accepted: 'true' })
-})
+app.get('/download/:id', download)
+app.post('/callback', callback)
+app.get('/integrity/:id', integrity)
 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);

@@ -5,8 +5,9 @@ import { OpReturn } from '@bsv/templates'
 const Data = OpReturn.default
 
 export default async function (req: Request, res: Response) {
-// read body as file data
-const r = new Utils.Reader()
+  const time = Date.now()
+  // read body as file data
+  const r = new Utils.Reader()
   r.read(req.body)
 
   // hash file and get length in bytes
@@ -48,10 +49,13 @@ const r = new Utils.Reader()
     fileHash,
     beef: tx.toHexBEEF(),
     arc: [initialResponse],
+    file: r.bin,
+    fileType: req.headers['content-type'],
+    time,
   }
-  await db.collection('txs').insertOne(document)
+  await db.collection('files').insertOne(document)
 
   // respond to client with confirmation
 
-  res.send({ txid })
+  res.send({ txid, fileHash })
 }
