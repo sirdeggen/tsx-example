@@ -1,12 +1,16 @@
 import express, { Application, Request, Response } from 'express'
+import upload from './upload'
 import { PrivateKey } from '@bsv/sdk'
+import { OpReturn } from '@bsv/templates'
 import db from './db'
 import html from './frontend'
 import dotenv from 'dotenv'
-import { error } from 'console'
 dotenv.config()
 
 const { FUNDING_WIF, PORT } = process.env
+
+const key = PrivateKey.fromWif(FUNDING_WIF)
+const Data = OpReturn.default
 
 const app: Application = express()
 
@@ -15,7 +19,7 @@ app.use(express.json())
 app.get('/', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'text/html')
   const remainingFundingTokens = await db.collection('funding').countDocuments({ spendTxid: null })
-  const address = PrivateKey.fromWif(FUNDING_WIF).toAddress().toString()
+  const address = key.toAddress().toString()
   res.send(html(address, remainingFundingTokens))
 })
 
@@ -24,20 +28,7 @@ app.get('/fund/:number', async (req: Request, res: Response) => {
   res.send({ number })
 })
 
-app.post('/upload', async (req: Request, res: Response) => {
-
-  // hash file and get length in bytes
-
-  // grab funding tokens as required (1 per kB assuming we start at 200 bytes rather than 0)
-  
-  // tx.broadcast and get a txid
-  
-  // store file in database
-
-  // respond to client with confirmation
-
-  res.send({ accepted: 'true' })
-})
+app.post('/upload', upload)
 
 app.get('/download/:id', async (req: Request, res: Response) => {
   // get the data by its txid or hash

@@ -19,7 +19,7 @@ export default (address, balance) => `
     <p>Retrieve stored data from /download/{hash} along with an integrity proof and timestamp.</p>
     <h2>Funding Service</h2>
     <p>This service has ${balance} write tokens remaining. To top up the balance, 
-    make a BSV payment to ${address} and hit the <a href="/fund/100">/fund/{number}</a> endpoint.</p>
+    make a BSV payment to ${address} and hit the <a href="/fund/10">/fund/{number}</a> endpoint.</p>
 </body>
 </html>
 `   
