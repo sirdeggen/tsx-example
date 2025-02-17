@@ -3,6 +3,7 @@ import { PrivateKey } from '@bsv/sdk'
 import db from './db'
 import html from './frontend'
 import dotenv from 'dotenv'
+import { error } from 'console'
 dotenv.config()
 
 const { FUNDING_WIF, PORT } = process.env
@@ -53,14 +54,16 @@ app.get('/integrity/:id', async (req: Request, res: Response) => {
   res.send({beef: 'dead'})
 })
 
-// app.post('/callback', async (req: Request, res: Response) => {
-//   // make sure this is ARC calling us
-//   if (req?.headers?.authorization !== process.env.CALLBACK_TOKEN) return res.status(401).send({ error: 'CALLBACK_TOKEN does not match' })
-  
-//   const { txid } = req.body
-//   await db.collection('txs').updateOne({ txid }, { $addToSet: { arc: req.body, time: Date.now() } })
-//   return res.send({ accepted: 'true' })
-// })
+app.post('/callback', async (req: Request, res: Response) => {
+  // make sure this is ARC calling us
+  if (req?.headers?.authorization !== process.env.CALLBACK_TOKEN) {
+    res.status(401).send({ error: 'Unauthorized' })
+    return
+  }
+  const { txid } = req.body
+  await db.collection('txs').updateOne({ txid }, { $addToSet: { arc: req.body, time: Date.now() } })
+  res.send({ accepted: 'true' })
+})
 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);
