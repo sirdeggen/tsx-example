@@ -8,7 +8,6 @@ dotenv.config()
 const { FUNDING_WIF, PORT } = process.env
 
 const app: Application = express()
-const port: number = 3000
 
 app.use(express.json())
 
@@ -25,13 +24,43 @@ app.get('/fund/:number', async (req: Request, res: Response) => {
 })
 
 app.post('/upload', async (req: Request, res: Response) => {
+
+  // hash file and get length in bytes
+
+  // grab funding tokens as required (1 per kB assuming we start at 200 bytes rather than 0)
+  
+  // tx.broadcast and get a txid
+  
+  // store file in database
+
+  // respond to client with confirmation
+
   res.send({ accepted: 'true' })
 })
 
-app.post('/download', async (req: Request, res: Response) => {
+app.get('/download/:id', async (req: Request, res: Response) => {
+  // get the data by its txid or hash
+
+  
+  // return the file data only
   res.send({ file: '' })
 })
 
+app.get('/integrity/:id', async (req: Request, res: Response) => {
+  // get the transaction and merkle path
+
+  // return that for validation client side.
+  res.send({beef: 'dead'})
+})
+
+// app.post('/callback', async (req: Request, res: Response) => {
+//   // make sure this is ARC calling us
+//   if (req?.headers?.authorization !== process.env.CALLBACK_TOKEN) return res.status(401).send({ error: 'CALLBACK_TOKEN does not match' })
+  
+//   const { txid } = req.body
+//   await db.collection('txs').updateOne({ txid }, { $addToSet: { arc: req.body, time: Date.now() } })
+//   return res.send({ accepted: 'true' })
+// })
 
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);
