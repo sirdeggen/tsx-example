@@ -1,7 +1,6 @@
 import express, { Application, Request, Response } from 'express'
 import upload from './upload'
 import { PrivateKey } from '@bsv/sdk'
-import { OpReturn } from '@bsv/templates'
 import db from './db'
 import html from './frontend'
 import dotenv from 'dotenv'
@@ -10,7 +9,6 @@ dotenv.config()
 const { FUNDING_WIF, PORT } = process.env
 
 const key = PrivateKey.fromWif(FUNDING_WIF)
-const Data = OpReturn.default
 
 const app: Application = express()
 
