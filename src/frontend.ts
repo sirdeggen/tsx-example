@@ -1,4 +1,4 @@
-export const html = (address, balance) => `
+export default (address, balance) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
